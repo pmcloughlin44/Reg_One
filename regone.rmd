@@ -1,0 +1,84 @@
+---
+title: "Regression_1"
+author: "Dr K"
+date: "April 25, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(tidyverse)
+require(tigerstats)
+```
+
+## First Read in the data
+
+```{r}
+theData <- read.csv(file="myData.csv",header = TRUE)
+```
+
+
+Now we are gonna look at what relations exist between our variables with plots.
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+##Now we see why ggplot is so cool
+```{r}
+basicNN <- ggplot(theData,aes(x=EXAM1,y=FINAL))
+```
+##Now add scatterplot and fitted regression line + then add loess
+
+```{r}
+basicNN + geom_point() 
+basicNN + geom_point() + geom_lm()
+basicNN + geom_point() + geom_lm()+ geom_smooth()
+```
+Lets take a look at how exam2 predicts the final
+
+```{r}
+basicN2 <- ggplot(theData,aes(x=EXAM2,y=FINAL))
+```
+##Now add scatterplot and fitted regression line + then add loess
+
+```{r}
+basicN2 + geom_point() 
+basicN2 + geom_point() + geom_lm()
+basicN2 + geom_point() + geom_lm()+ geom_smooth()
+``` 
+
+Lets take a look at how exam3 predicts the final
+
+```{r}
+basicN3 <- ggplot(theData,aes(x=EXAM3,y=FINAL))
+```
+##Now add scatterplot and fitted regression line + then add loess
+
+```{r}
+basicN3 + geom_point() 
+basicN3 + geom_point() + geom_lm()
+basicN3 + geom_point() + geom_lm()+ geom_smooth()
+```
+# Build 3 regression Models and determine how well each predicts the Final
+
+```{r}
+M1 <- lm(FINAL ~ EXAM1, data=theData) 
+summary.lm(M1)
+summary(M1)$adj.r.squared
+```
+```{r}
+M2 <- lm(FINAL ~ EXAM2, data=theData) 
+summary.lm(M2)
+summary(M2)$adj.r.squared
+```  
+```{r}
+M3 <- lm(FINAL ~ EXAM3, data=theData) 
+summary.lm(M3)
+M3r2 <- summary(M3)$adj.r.squared
+```
+## Based on comparing adjusted $R^2$ model M3 > M1 > M2  
+with M3 explaining `r round(summary(M3)$adj.r.squared * 100,1)` percent of the error  
+whereas M1 Explained `r round(summary(M1)$adj.r.squared * 100,1)` percent and  
+M2 Explained `r round(summary(M2)$adj.r.squared * 100,1)` percent
