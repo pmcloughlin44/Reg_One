@@ -82,3 +82,71 @@ M3r2 <- summary(M3)$adj.r.squared
 with M3 explaining `r round(summary(M3)$adj.r.squared * 100,1)` percent of the error  
 whereas M1 Explained `r round(summary(M1)$adj.r.squared * 100,1)` percent and  
 M2 Explained `r round(summary(M2)$adj.r.squared * 100,1)` percent
+
+## How to Predict using the model  
+
+Suppose student Paul got 75 on EXAM1 92 on EXAM2 and 83 on EXAM3.
+Student Mary got 92 on EXAM1 93 on EXAM2 and 79 on EXAM3
+
+What does each of our models predict for their respective FINAL?  
+
+### We use the predict.lm function "predict.lm(model,newdata)"  
+We need to create a newdata frame that has variables named the same as those we used to make our model.  
+
+```{r}
+new <- data.frame(name=c("Paul","Mary"),EXAM1=c(75,92),EXAM2=c(92,93),EXAM3=c(83,79))
+```
+
+#### Now lets see what the three models predict - Here is M1
+
+```{r}
+predict.lm(M1,new)
+```
+
+####  Here is M2
+
+
+```{r}
+predict.lm(M2,new)
+``` 
+
+####  Here is M3
+
+
+```{r}
+predict.lm(M3,new)
+```  
+## Upping the game to more than one predictor  
+#### It seems intuitive that knowing the score on more that one exam should improve our ability to predict the final --- how does that work?  
+
+We start by making a model using the first two exams calling it M12  
+
+```{r}
+M12 <- lm(FINAL ~ EXAM1 + EXAM2, data = theData)
+summary.lm(M12)
+```
+The adjusted R^2 is larger than either tha of M1 or M2, however the is a statistical test "anova" wich is commonly used to test nested models. It is called "anova" in R  
+
+```{r}
+anova(M1,M12)
+anova(M2,M12)
+```
+
+
+The test being performed is called a "Drop in F test" It measures whether the sums of squares of our errors (ie the residuals) has been significantly reduced. We can see that all the errors from only EXAM1 amounted to around 1456 and they dropped to 1020. This shows the drop of over 400 points to be significant. The drop for going from EXAM2 to both went from 1888 down to 1020 - larger drop with more significance. 
+
+## How about prediction?
+
+```{r}
+predict.lm(M12,new)
+```
+
+## Comparing models works on nested models - try it just between M1 and M2
+
+```{r}
+anova(M1,M2)
+```
+
+no F test is performed but you still get information on residual sums of squares from your models. 
+
+## Now your turn
