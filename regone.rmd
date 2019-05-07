@@ -140,8 +140,29 @@ The test being performed is called a "Drop in F test" It measures whether the su
 ```{r}
 predict.lm(M12,new)
 ```
+  
+### Lets explore some other prediction capabilities eg confidence   
 
-## Comparing models works on nested models - try it just between M1 and M2
+```{r}
+predict.lm(M12,new,interval = "confidence",se.fit = TRUE)
+```
+### and now prediction  
+
+```{r}
+predict.lm(M12,new,interval = "prediction",se.fit = TRUE)
+```
+### By default the intervals are at the 95% level here we change it to 90%  
+
+```{r}
+predict.lm(M12,new,interval = "prediction",level = 0.90,se.fit = TRUE)
+```
+#### Prediction intervals are always larger  
+
+a prediction interval will be wider than a confidence interval. The difference between a prediction interval and a confidence interval is focus. ... The key point is that the confidence interval tells you about the likely next prediction irrespective of regressor value and the prediction interval talks about the next point at that regressor value.  
+
+## Comparing models works on nested models - try it just between M1 and M2  
+#### M1 and M2 are not nested (they share no common predictors)  
+
 
 ```{r}
 anova(M1,M2)
