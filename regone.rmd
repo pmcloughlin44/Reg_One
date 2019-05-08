@@ -21,46 +21,43 @@ theData <- read.csv(file="myData.csv",header = TRUE)
 Now we are gonna look at what relations exist between our variables with plots.
 
 
-## Including Plots
 
-You can also embed plots, for example:
 
-##Now we see why ggplot is so cool
+## Now we see why ggplot is so cool
 ```{r}
 basicNN <- ggplot(theData,aes(x=EXAM1,y=FINAL))
 ```
-##Now add scatterplot and fitted regression line + then add loess
+## Now add scatterplot and fitted regression line  
 
 ```{r}
 basicNN + geom_point() 
 basicNN + geom_point() + geom_lm()
-basicNN + geom_point() + geom_lm()+ geom_smooth()
 ```
+  
 Lets take a look at how exam2 predicts the final
 
 ```{r}
 basicN2 <- ggplot(theData,aes(x=EXAM2,y=FINAL))
 ```
-##Now add scatterplot and fitted regression line + then add loess
+## Now add scatterplot and fitted regression line  
 
 ```{r}
 basicN2 + geom_point() 
 basicN2 + geom_point() + geom_lm()
-basicN2 + geom_point() + geom_lm()+ geom_smooth()
 ``` 
-
+  
 Lets take a look at how exam3 predicts the final
 
 ```{r}
 basicN3 <- ggplot(theData,aes(x=EXAM3,y=FINAL))
 ```
-##Now add scatterplot and fitted regression line + then add loess
+## Now add scatterplot and fitted regression line  
 
 ```{r}
 basicN3 + geom_point() 
 basicN3 + geom_point() + geom_lm()
-basicN3 + geom_point() + geom_lm()+ geom_smooth()
 ```
+  
 # Build 3 regression Models and determine how well each predicts the Final
 
 ```{r}
@@ -159,6 +156,24 @@ predict.lm(M12,new,interval = "prediction",level = 0.90,se.fit = TRUE)
 #### Prediction intervals are always larger  
 
 a prediction interval will be wider than a confidence interval. The difference between a prediction interval and a confidence interval is focus. ... The key point is that the confidence interval tells you about the likely next prediction irrespective of regressor value and the prediction interval talks about the next point at that regressor value.  
+  
+### Now we build a fancier plot showing confidence and prediction intervals -- see if you can figure out what the code is doing.  
+
+```{r}
+temp_var <- predict(M1,interval="confidence") 
+new_df <- cbind(theData, temp_var) %>% rename(lwrc=lwr,uprc=upr,fitc=fit)
+temp_var2 <- predict(M1,interval="prediction") 
+new_df2 <- cbind(new_df, temp_var2)  
+ggplot(new_df2, aes(EXAM1, FINAL))+
+  geom_point()+
+geom_line(aes(y=lwrc), color = "blue", linetype = "dashed")+
+    geom_line(aes(y=uprc), color = "blue", linetype = "dashed")+
+ geom_line(aes(y=lwr), color = "red", linetype = "dashed")+
+    geom_line(aes(y=upr), color = "red", linetype = "dashed")+ 
+    geom_smooth(method=lm, se=TRUE)
+
+```
+
 
 ## Comparing models works on nested models - try it just between M1 and M2  
 #### M1 and M2 are not nested (they share no common predictors)  
@@ -170,4 +185,5 @@ anova(M1,M2)
 
 no F test is performed but you still get information on residual sums of squares from your models. 
 
-## Now your turn
+## Now your turn  
+### Create a model M123 that uses all the exams. Is it the best?? What is the RSS and Adj $R^2$ for it?
